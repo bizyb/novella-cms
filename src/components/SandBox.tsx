@@ -1,8 +1,9 @@
 import React, {FC, useEffect, useState} from "react";
 import dynamic from "next/dynamic";
-import {Button, Grid} from "@mui/material";
+import {Box, Button, FormControlLabel, Grid, Switch} from "@mui/material";
 import {getHostName} from "@/components/utils";
 import {apiPaths} from "@/paths";
+import HtmlPreview from "@/components/htmlPreview";
 
 
 const ReactJson = dynamic(() => import('react-json-view'), {
@@ -18,6 +19,7 @@ const SandBox: FC<SandBoxProps> = (props) => {
   const [singlePostData, setSinglePostData] = useState<any>(null)
   const [allPostsData, setAllPostsData] = useState<any>([])
   const [showAllPosts, setShowAllPosts] = useState(false)
+  const [showHtml, setShowHtml] = useState(false)
 
   useEffect(() => {
     setSinglePostData({
@@ -25,8 +27,13 @@ const SandBox: FC<SandBoxProps> = (props) => {
     })
   }, [props.singlePostApiData])
 
+  const handleHtmlToggle = () => {
+    setShowHtml(!showHtml)
+  }
+
   const getAllPosts = () => {
     setShowAllPosts(true)
+    setShowHtml(false)
     const url = `${getHostName()}${apiPaths.editorDashboard}`
     const apiUrl = `${getHostName()}${apiPaths.getPosts}`
     const request = {
@@ -73,12 +80,30 @@ const SandBox: FC<SandBoxProps> = (props) => {
               All Documents
             </Button>
           </Grid>
-          <Grid item sm={12} sx={{mt: 2, p: 2}}>
-            <h5>Request</h5>
-            <ReactJson src={showAllPosts ? allPostsData.request : singlePostData?.request } name={null}/>
-            <h5 style={{marginTop: '10px'}}>Response</h5>
-            <ReactJson src={showAllPosts ? allPostsData?.posts : singlePostData?.post } name={null}/>
-          </Grid>
+          {!showAllPosts &&
+              <Grid item xs={12}>
+                <Box p={0} sx={{ml: 3}}>
+                  <FormControlLabel
+                      control={<Switch color="warning" defaultChecked={false}
+                                       onChange={handleHtmlToggle}/>}
+                      label={'HTML'}
+                  />
+                </Box>
+              </Grid>
+          }
+          {
+            showHtml && !showAllPosts ? (
+                <Grid item sm={12}><HtmlPreview post={singlePostData?.post}/></Grid>
+                ) : (
+                <Grid item sm={12} sx={{mt: 2, p: 2}}>
+                  <h5>Request</h5>
+                  <ReactJson src={showAllPosts ? allPostsData.request : singlePostData?.request } name={null}/>
+                  <h5 style={{marginTop: '10px'}}>Response</h5>
+                  <ReactJson src={showAllPosts ? allPostsData?.posts : singlePostData?.post } name={null}/>
+              </Grid>
+            )
+          }
+
         </Grid>
     )
 }
