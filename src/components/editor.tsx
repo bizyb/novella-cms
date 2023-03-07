@@ -1,0 +1,196 @@
+import React, {FC, useEffect, useState} from "react";
+import axios from "axios";
+import {DocumentDetail} from "@/types/types";
+import {Box, Button, CircularProgress, Grid, Paper, TextField} from "@mui/material";
+import {useRouter} from "next/router";
+import { Editor } from "@tinymce/tinymce-react";
+import {getHostName, tinyMceConfigs} from "@/components/utils";
+import {apiPaths} from "@/paths";
+import {toast, ToastContainer} from "react-toastify";
+import slug from 'slug'
+
+export interface CMSEditorProps {
+  post?: DocumentDetail,
+  onPostChange?: (document: DocumentDetail) => void
+}
+
+const CMSEditor: FC<CMSEditorProps> = (props) => {
+  const [publish, setPublish] = useState<boolean>(false)
+  const [content, setContent] = useState<string>("");
+  const [title, setTitle] = useState<string>("")
+  const [currentSlug, setCurrentSlug] = useState<string>("")
+  const [slugEditable, setSlugEditable] = useState<boolean>(true)
+  const [showProgress, setShowProgress] = useState(false)
+  const router = useRouter()
+
+  const configs = tinyMceConfigs
+  if (router.pathname.includes("/editor")) {
+    configs["height"] = '60vh'
+  } else {
+    configs["height"] = '40vh'
+  }
+
+  useEffect(() => {
+    if (props.post) {
+      setPublish(props.post.published)
+      setContent(props.post.content)
+      setTitle(props.post.title)
+      if (props.post.slug) {
+        setCurrentSlug(props.post.slug)
+        setSlugEditable(false)
+      }
+    }
+  }, [])
+
+
+  const handleChange = (content) => {
+    setContent(content)
+  }
+
+  const handleTitleChange = (event) => {
+    event.preventDefault()
+    setTitle(event.target.value)
+    if (slugEditable) {
+      setCurrentSlug(slug(event.target.value))
+    }
+  }
+
+  const handleSlugChange = (event) => {
+    event.preventDefault()
+    setCurrentSlug(event.target.value)
+  }
+
+  const saveToDb = () => {
+    if (title && slug) {
+      const document: DocumentDetail = {
+        title: title,
+        content: content,
+        published: publish,
+        slug: currentSlug,
+        uid: props.post?.uid,
+      }
+      axios.post(`${getHostName()}${apiPaths.editorUpsert}`, document)
+      .then(result => {
+        toast("Document saved!", {
+          type: 'success',
+          position: toast.POSITION.BOTTOM_RIGHT
+        });
+        props.onPostChange(document)
+        if (!router.pathname.includes("editor")) {
+          setShowProgress(true)
+          router.push("/editor/" + JSON.parse(result.data).uid)
+          .catch(e => console.log(e))
+        }
+      })
+      .catch(e => console.log(e))
+    } else {
+      toast("Title provide a title", {
+        type: 'error',
+        position: toast.POSITION.BOTTOM_RIGHT
+      });
+    }
+  }
+
+  const onCreateNew = () => {
+    router.push("/")
+    .catch(e => console.log(e))
+  }
+
+
+  // @ts-ignore
+  return (
+      <div className="editor-container">
+        {
+            showProgress && (
+                <Box className="center-aligned">
+                <CircularProgress color="error"/>
+              </Box>
+            )
+
+        }
+        <Paper sx={{ml: 1}}>
+        <Grid container sx={{p: 2, mb: 10}}>
+          <Grid item sm={12} sx={{
+            pt: 1,
+            pb: 2
+          }}>
+            <TextField
+                inputProps={{
+                  style: {
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    paddingTop: '30px',
+                    paddingBottom: '30px'}
+                }}
+                value={title}
+                fullWidth
+                id="outlined-required"
+                label="Title"
+                onChange={handleTitleChange}
+            />
+          </Grid>
+          <Grid item sm={12} sx={{
+            pt: 1,
+            pb: 5
+          }}>
+            <TextField
+                value={currentSlug}
+                inputProps={{
+                  style: {
+                    fontSize: '16px',
+                    paddingTop: '30px',
+                    paddingBottom: '30px'}
+                }}
+                fullWidth
+                id="outlined-required"
+                label={currentSlug ? '' : 'slug'}
+                onChange={handleSlugChange}
+            />
+          </Grid>
+          <Grid item sm={12}>
+            <Editor
+                id="tiny-editor"
+                tinymceScriptSrc="/assets/js/tinymce/tinymce.min.js"
+                onEditorChange={handleChange}
+                value={content}
+                init={tinyMceConfigs}
+            />
+          </Grid>
+          <Grid item sm={6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
+            <Button
+                onClick={saveToDb}
+                variant="contained" sx={{mb: 2}}
+                color='success'
+            >
+              Save
+            </Button>
+          </Grid>
+          <Grid item sm={6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
+            <Button
+                onClick={onCreateNew}
+                variant="contained"
+                sx={{mb: 2}}
+                color='warning'
+            >
+              Create New Post
+            </Button>
+          </Grid>
+        </Grid>
+        </Paper>
+        <ToastContainer
+            style={{width: '100%', maxWidth: '600px'}}
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"/>
+      </div>
+  )
+}
+
+export default CMSEditor

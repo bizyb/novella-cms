@@ -1,0 +1,105 @@
+@media screen {
+    html {
+        background: #f4f4f4;
+        min-height: 100%;
+        overflow: auto;
+    }
+}
+
+html {
+    overflow: auto;
+    /*position: relative;*/
+}
+p, pre, ul, li {
+    margin:auto;
+    text-align:justify;
+    word-break: break-word;
+    white-space: pre-line;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+}
+
+@media screen {
+    body {
+        background-color: #fff;
+        box-shadow: 0 0 4px rgba(0, 0, 0, .15);
+        box-sizing: border-box;
+        margin: 1rem auto 0;
+
+        /*Letter size dimensions for content*/
+        height: 1056px;
+        width: 816px;
+        /*min-height: calc(100vh - 1rem);*/
+
+        /*0.5-inch margins*/
+        padding: 48px 48px 24px 48px;
+
+        margin-bottom: 2rem;
+        margin-top: 2rem;
+        /*height: 400px;*/
+        white-space: nowrap;
+        overflow-y: hidden;
+    }
+}
+
+table {
+    border-collapse: collapse
+}
+
+table:not([cellpadding]) td,
+table:not([cellpadding]) th {
+    padding: .4rem
+}
+
+table[border]:not([border="0"]):not([style*=border-width]) td,
+table[border]:not([border="0"]):not([style*=border-width]) th {
+    border-width: 1px
+}
+
+table[border]:not([border="0"]):not([style*=border-style]) td,
+table[border]:not([border="0"]):not([style*=border-style]) th {
+    border-style: solid
+}
+
+table[border]:not([border="0"]):not([style*=border-color]) td,
+table[border]:not([border="0"]):not([style*=border-color]) th {
+    border-color: #ccc
+}
+
+figure figcaption {
+    color: #999;
+    margin-top: .25rem;
+    text-align: center
+}
+
+hr {
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px 0 0 0
+}
+
+.mce-content-body:not([dir=rtl]) blockquote {
+    border-left: 2px solid #ccc;
+    margin-left: 1.5rem;
+    padding-left: 1rem
+}
+
+.mce-content-body[dir=rtl] blockquote {
+    border-right: 2px solid #ccc;
+    margin-right: 1.5rem;
+    padding-right: 1rem
+}
+.rr-editor-content-59298434021647120326148 {
+    background: red;
+    padding: 4rem 6rem 6rem 6rem;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+}
