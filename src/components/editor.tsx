@@ -21,6 +21,7 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
   const [currentSlug, setCurrentSlug] = useState<string>("")
   const [slugEditable, setSlugEditable] = useState<boolean>(true)
   const [showProgress, setShowProgress] = useState(false)
+  const [isHomePage, setIsHomePage] = useState(true)
   const router = useRouter()
 
   const configs = tinyMceConfigs
@@ -29,6 +30,15 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
   } else {
     configs["height"] = '40vh'
   }
+
+  useEffect(() => {
+    console.log("pathname: ", router.pathname, router.pathname === "/")
+    if (router.pathname === "/") {
+      setIsHomePage(true)
+    } else {
+      setIsHomePage(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (props.post) {
@@ -55,11 +65,6 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
     }
   }
 
-  const handleSlugChange = (event) => {
-    event.preventDefault()
-    setCurrentSlug(event.target.value)
-  }
-
   const saveToDb = () => {
     if (title && slug) {
       const document: DocumentDetail = {
@@ -71,10 +76,12 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
       }
       axios.post(`${getHostName()}${apiPaths.editorUpsert}`, document)
       .then(result => {
-        toast("Document saved!", {
-          type: 'success',
-          position: toast.POSITION.BOTTOM_RIGHT
-        });
+        if (!isHomePage) {
+          toast("Document updated!", {
+            type: 'success',
+            position: toast.POSITION.BOTTOM_RIGHT
+          });
+        }
         props.onPostChange(document)
         if (!router.pathname.includes("editor")) {
           setShowProgress(true)
@@ -84,7 +91,7 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
       })
       .catch(e => console.log(e))
     } else {
-      toast("Title provide a title", {
+      toast("Please provide a title", {
         type: 'error',
         position: toast.POSITION.BOTTOM_RIGHT
       });
@@ -108,8 +115,8 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
             )
 
         }
-        <Paper sx={{ml: 1}}>
-        <Grid container sx={{p: 2, mb: 10}}>
+        <Paper sx={{p: 1}}>
+        <Grid container sx={{p: 2, mb: 1}}>
           <Grid item sm={12} sx={{
             pt: 1,
             pb: 2
@@ -129,24 +136,6 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
                 onChange={handleTitleChange}
             />
           </Grid>
-          <Grid item sm={12} sx={{
-            pt: 1,
-            pb: 5
-          }}>
-            <TextField
-                value={currentSlug}
-                inputProps={{
-                  style: {
-                    fontSize: '16px',
-                    paddingTop: '30px',
-                    paddingBottom: '30px'}
-                }}
-                fullWidth
-                id="outlined-required"
-                label={currentSlug ? '' : 'slug'}
-                onChange={handleSlugChange}
-            />
-          </Grid>
           <Grid item sm={12}>
             <Editor
                 id="tiny-editor"
@@ -156,25 +145,28 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
                 init={tinyMceConfigs}
             />
           </Grid>
-          <Grid item sm={6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
+          <Grid item sm={isHomePage ? 2 : 6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
             <Button
                 onClick={saveToDb}
                 variant="contained" sx={{mb: 2}}
                 color='success'
             >
-              Save
+              {isHomePage ? 'Preview' : 'Update'}
             </Button>
           </Grid>
-          <Grid item sm={6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
-            <Button
-                onClick={onCreateNew}
-                variant="contained"
-                sx={{mb: 2}}
-                color='warning'
-            >
-              Create New Post
-            </Button>
-          </Grid>
+          {
+              !isHomePage &&
+              <Grid item sm={6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
+                <Button
+                    onClick={onCreateNew}
+                    variant="contained"
+                    sx={{mb: 2}}
+                    color='warning'
+                >
+                  Create New Post
+                </Button>
+              </Grid>
+          }
         </Grid>
         </Paper>
         <ToastContainer

@@ -14,14 +14,17 @@ export async function getServerSideProps(context) {
   const post = JSON.parse(await response.text())
   const document: DocumentDetail = JSON.parse(post)?.post as DocumentDetail
   let apiUrl = url
+  let apiUrl2 = url
   if (document) {
-    apiUrl = `${getHostName()}${apiPaths.getPostBySlug}/${document.slug}`
+    apiUrl = `${getHostName()}${apiPaths.getPostBySlug}/${document.uid}`
+    apiUrl2 = `${getHostName()}${apiPaths.getPostBySlug}/${document.slug}`
   }
   const request = {
     request: {
       "Content-Type": "application/json",
       method: 'GET',
-      url: apiUrl
+      urlById: apiUrl,
+      urlBySlug: apiUrl2
     }
   }
   return {

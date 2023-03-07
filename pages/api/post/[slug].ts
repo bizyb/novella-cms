@@ -21,6 +21,10 @@ const handler = async (req, res) => {
       const slugs = new Map<string, string>(Object.entries(JSON.parse(slugData)))
       const map = new Map<string, DocumentDetail>(Object.entries(JSON.parse(data)))
       p = map.get(slugs.get(req.params.slug))
+      if (p === undefined) {
+        // If the document cannot be located by its slug, then treat the slug as a uid
+        p = map.get(req.params.slug)
+      }
       p.next = getNextDocument(map, p)
       p.prev = getPrevDocument(map, p)
     }

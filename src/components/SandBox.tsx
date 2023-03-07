@@ -46,28 +46,34 @@ const SandBox: FC<SandBoxProps> = (props) => {
   }
 
     return (
-        <Grid container>
-          <Grid item sm={12}>
-            <p>API</p>
-          </Grid>
-          <Grid item sm={3}>
+        <Grid container spacing={2} sx={{p: 2}}>
+          <Grid item xs={12} sx={{display: 'inline-flex'}}>
             <Button
                 onClick={() => setShowAllPosts(false)}
                 variant={showAllPosts ? 'outlined' : 'contained'}
-                sx={{mb: 2, textTransform: 'none'}}>
-              View Current Document
+                sx={{
+                  mb: 1,
+                  textTransform: 'none',
+                  width: '154px',
+                  borderTopRightRadius: '0px',
+                  borderBottomRightRadius: '0px'}}>
+              Current Document
             </Button>
-          </Grid>
-          <Grid item sm={3}>
             <Button
                 onClick={getAllPosts}
                 variant={showAllPosts ? 'contained' : 'outlined'}
-                sx={{mb: 2, textTransform: 'none'}}
+                sx={{
+                  mb: 1,
+                  textTransform: 'none',
+                  width: '154px',
+                  borderTopLeftRadius: '0px',
+                  borderBottomLeftRadius: '0px'
+                }}
             >
-              View All Documents
+              All Documents
             </Button>
           </Grid>
-          <Grid item sm={12} sx={{mt: 2}}>
+          <Grid item sm={12} sx={{mt: 2, p: 2}}>
             <h5>Request</h5>
             <ReactJson src={showAllPosts ? allPostsData.request : singlePostData?.request } name={null}/>
             <h5 style={{marginTop: '10px'}}>Response</h5>

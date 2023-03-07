@@ -297,6 +297,9 @@ code {
   max-width: 912px;
   margin: 0 auto;
 }
+.react-json-view {
+  white-space: nowrap;
+}
 .header-title {
   color: #181818;
 }

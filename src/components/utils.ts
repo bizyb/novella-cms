@@ -69,7 +69,7 @@ export const tinyMceConfigs: any = {
   branding: false,
   statusbar: false,
   menubar: 'file edit view insert format tools table',
-  toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | fullscreen | ltr rtl',
+  toolbar: 'fullscreen | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | ltr rtl',
   plugins: [
     'preview',
     'searchreplace',
