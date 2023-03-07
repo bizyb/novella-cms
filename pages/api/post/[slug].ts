@@ -24,9 +24,9 @@ const handler = async (req, res) => {
       p.next = getNextDocument(map, p)
       p.prev = getPrevDocument(map, p)
     }
-    res.status(200).json(JSON.stringify({
+    res.status(200).json({
       "post": p
-    }));
+    })
   } catch (err) {
     res.status(500).json({ statusCode: 500, message: err.message });
   }

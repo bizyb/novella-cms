@@ -19,9 +19,9 @@ const handler = async (_req, res) => {
       const map = toArray((new Map<string, DocumentDetail>(Object.entries(JSON.parse(data)))).values())
       posts = map.sort((a, b) => b.createdAt - a.createdAt)
     }
-    res.status(200).json(JSON.stringify({
+    res.status(200).json({
       "posts": posts
-    }));
+    });
   } catch (err) {
     res.status(500).json({ statusCode: 500, message: err.message });
   }

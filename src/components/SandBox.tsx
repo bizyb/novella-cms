@@ -28,16 +28,14 @@ const SandBox: FC<SandBoxProps> = (props) => {
   const getAllPosts = () => {
     setShowAllPosts(true)
     const url = `${getHostName()}${apiPaths.editorDashboard}`
+    const apiUrl = `${getHostName()}${apiPaths.getPosts}`
     const request = {
-      headers: {
-        "Content-Type": "application/json"
-      },
+      "Content-Type": "application/json",
       method: 'GET',
-      url: url
+      url: apiUrl
     }
     fetch(url).then(result => {
       result.text().then(text => {
-        console.log("text: ", text)
         const allPosts = JSON.parse(text)
         setAllPostsData({
           posts: allPosts ? JSON.parse(allPosts).posts : [],
@@ -70,7 +68,10 @@ const SandBox: FC<SandBoxProps> = (props) => {
             </Button>
           </Grid>
           <Grid item sm={12} sx={{mt: 2}}>
-            <ReactJson src={showAllPosts ? allPostsData : singlePostData } name={null}/>
+            <h5>Request</h5>
+            <ReactJson src={showAllPosts ? allPostsData.request : singlePostData?.request } name={null}/>
+            <h5 style={{marginTop: '10px'}}>Response</h5>
+            <ReactJson src={showAllPosts ? allPostsData?.posts : singlePostData?.post } name={null}/>
           </Grid>
         </Grid>
     )

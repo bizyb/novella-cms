@@ -10,18 +10,20 @@ import SandBox from "@/components/SandBox";
 export async function getServerSideProps(context) {
   const id = context.query.id
   const url = `${getHostName()}${apiPaths.editorGet}/${id}`
-  const request = {
-    request: {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      method: 'GET',
-      url: url
-    }
-  }
-
   const response = await fetch(url)
   const post = JSON.parse(await response.text())
+  const document: DocumentDetail = JSON.parse(post)?.post as DocumentDetail
+  let apiUrl = url
+  if (document) {
+    apiUrl = `${getHostName()}${apiPaths.getPostBySlug}/${document.slug}`
+  }
+  const request = {
+    request: {
+      "Content-Type": "application/json",
+      method: 'GET',
+      url: apiUrl
+    }
+  }
   return {
     props: {
       post: JSON.parse(post)?.post,
@@ -43,7 +45,7 @@ const Index: FC<EditorIndexProps> = (props) => {
   useEffect(() => {
     setSinglePostData({
       ...props.request,
-      ...props.post
+      post: props.post
     })
   }, [])
 
@@ -51,7 +53,7 @@ const Index: FC<EditorIndexProps> = (props) => {
     if (updatedPost) {
       setSinglePostData({
         ...props.request,
-        ...updatedPost
+        post: updatedPost
       })
     } else {
       setSinglePostData({})
