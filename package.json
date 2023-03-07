@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cp -rf .env.local .env && node server.js",
-    "build": "cp -rf .env.prod .env && next build",
-    "start": "cp -rf .env.prod .env && NODE_ENV=production node server.js"
+    "dev": "cp .env.local .env && node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",

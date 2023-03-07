@@ -13,6 +13,8 @@ COPY ./package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY ./ ./
+COPY ./.env.prod ./.env
+
 
 RUN npm run build
 EXPOSE 3000
