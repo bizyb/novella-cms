@@ -2,20 +2,12 @@ import React, {FC, useEffect, useState} from 'react';
 import Head from "next/head";
 import {getHostName} from "@/components/utils";
 import {DocumentDetail} from "@/types/types";
-import initializeBasicAuth from 'nextjs-basic-auth'
 import CMSEditor from "@/components/editor";
 import {apiPaths} from "@/paths";
-import {authUsers} from "@/auth";
 import {Grid} from "@mui/material";
 import SandBox from "@/components/SandBox";
 
-const basicAuthCheck = initializeBasicAuth({
-  users: authUsers
-})
-
 export async function getServerSideProps(context) {
-  const {req, res} = context
-  await basicAuthCheck(req, res)
   const id = context.query.id
   const url = `${getHostName()}${apiPaths.editorGet}/${id}`
   const request = {
