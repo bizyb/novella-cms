@@ -1,22 +1,14 @@
 import {DocumentDetail} from "@/types/types";
 const utils = require("../../../../server-utils")
-const fs = require('fs')
-
-const openFile = async (path: string) => {
-  try {
-    return await fs.promises.readFile(path, 'utf8')
-  } catch (e) {
-    return null
-  }
-}
 
 const handler = async (req, res) => {
   try {
-    const data = await openFile(utils.filePaths.dataFile)
-    let p: DocumentDetail = null
-    if (data) {
-      const map = new Map<string, DocumentDetail>(Object.entries(JSON.parse(data)))
-      p = map.get(req.params.id)
+    const {id, apiKey}  = req.query
+    let p: DocumentDetail = {}
+    const allDocuments = await utils.getAllDocuments(utils.filePaths.dataFile)
+    const documentsByApiKey: Map<string, DocumentDetail> = utils.getDocumentsByApiKey(allDocuments, apiKey)
+    if (documentsByApiKey.has(id)) {
+      p = documentsByApiKey.get(id)
     }
     res.status(200).json(JSON.stringify({
       "post": p

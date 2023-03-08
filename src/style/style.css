@@ -225,15 +225,32 @@ code {
 }
 
 .h0 {
-  font-size: 64px;
+  font-size:48px;
+  line-height: 1.0125;
+  margin-top: 0.85em;
+  word-wrap: break-word
+}
+
+.editor-container pre {
+  width: 100%;
+  overflow: visible;
+  font-size: 12px;
+}
+.editor-container pre p {}
+.editor-container code {
+  font-size: 12px;
+  font-weight: 700;
+}
+.landing-page-title {
+  font-size:64px;
   line-height: 1.0125;
   margin-top: 0.85em;
   word-wrap: break-word
 }
 
 @media (min-width: 52em) {
-  .h0 {
-    font-size:128px
+  .landing-page-title {
+    font-size: 128px;
   }
 }
 
@@ -296,6 +313,9 @@ code {
 .cms-demo {
   max-width: 912px;
   margin: 0 auto;
+}
+.react-json-view {
+  white-space: nowrap;
 }
 .header-title {
   color: #181818;

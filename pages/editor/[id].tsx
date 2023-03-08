@@ -5,23 +5,28 @@ import {DocumentDetail} from "@/types/types";
 import CMSEditor from "@/components/editor";
 import {apiPaths} from "@/paths";
 import {Grid} from "@mui/material";
-import SandBox from "@/components/SandBox";
+import SandBox from "@/components/sandbox";
 
 export async function getServerSideProps(context) {
-  const id = context.query.id
-  const url = `${getHostName()}${apiPaths.editorGet}/${id}`
-  const request = {
-    request: {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      method: 'GET',
-      url: url
-    }
-  }
-
+  const {id, apiKey} = context.query
+  const url = `${getHostName()}${apiPaths.editorGet}/${id}?apiKey=${apiKey}`
   const response = await fetch(url)
   const post = JSON.parse(await response.text())
+  const document: DocumentDetail = JSON.parse(post)?.post as DocumentDetail
+  let apiUrl = url
+  // let apiUrl2 = url
+  if (document) {
+    apiUrl = `${getHostName()}${apiPaths.getPostBySlug}/${document.slug}?apiKey=${apiKey}`
+    // apiUrl2 = `${getHostName()}${apiPaths.getPostBySlug}/${document.slug}?apiKey=${apiKey}`
+  }
+  const request = {
+    request: {
+      "Content-Type": "application/json",
+      method: 'GET',
+      urlById: apiUrl,
+      // urlBySlug: apiUrl2
+    }
+  }
   return {
     props: {
       post: JSON.parse(post)?.post,
@@ -43,7 +48,7 @@ const Index: FC<EditorIndexProps> = (props) => {
   useEffect(() => {
     setSinglePostData({
       ...props.request,
-      ...props.post
+      post: props.post
     })
   }, [])
 
@@ -51,7 +56,7 @@ const Index: FC<EditorIndexProps> = (props) => {
     if (updatedPost) {
       setSinglePostData({
         ...props.request,
-        ...updatedPost
+        post: updatedPost
       })
     } else {
       setSinglePostData({})
@@ -61,7 +66,7 @@ const Index: FC<EditorIndexProps> = (props) => {
   return (
       <>
         <Head>
-          <title>{ props.post?.title + " | Editor"}</title>
+          <title>{ props.post?.title + " | Novella CMS"}</title>
         </Head>
         <Grid container spacing={3}>
           <Grid item sm={props.enableSandbox ? 6 : 12}>
