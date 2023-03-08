@@ -1,17 +1,9 @@
-export interface Post {
-  id?: number,
-  slug?: string,
-  date?: string,
-  title?: string,
-  prev?: Post,
-  next?: Post
-}
-
 export interface DocumentMetadata {
   uid?: string,
   slug?: string,
   createdAt?: number,
-  title?: string
+  title?: string,
+  apiKey?: string
 }
 
 export interface DocumentDetail {
@@ -24,5 +16,6 @@ export interface DocumentDetail {
   next?: DocumentMetadata,
   updatedAt?: number,
   createdAt?: number,
-  published?: boolean
+  published?: boolean,
+  apiKey?: string
 }

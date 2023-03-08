@@ -20,6 +20,15 @@ const SandBox: FC<SandBoxProps> = (props) => {
   const [allPostsData, setAllPostsData] = useState<any>([])
   const [showAllPosts, setShowAllPosts] = useState(false)
   const [showHtml, setShowHtml] = useState(false)
+  const [apiKey, setApiKey] = useState("")
+
+  useEffect(() => {
+    const key = "sessionApiKey"
+    const cachedApiKey = localStorage.getItem(key)
+    if (cachedApiKey) {
+      setApiKey(cachedApiKey)
+    }
+  }, [])
 
   useEffect(() => {
     setSinglePostData({
@@ -34,8 +43,8 @@ const SandBox: FC<SandBoxProps> = (props) => {
   const getAllPosts = () => {
     setShowAllPosts(true)
     setShowHtml(false)
-    const url = `${getHostName()}${apiPaths.editorDashboard}`
-    const apiUrl = `${getHostName()}${apiPaths.getPosts}`
+    const url = `${getHostName()}${apiPaths.editorDashboard}?apiKey=${apiKey}`
+    const apiUrl = `${getHostName()}${apiPaths.getPosts}?apiKey=${apiKey}`
     const request = {
       "Content-Type": "application/json",
       method: 'GET',
@@ -45,7 +54,7 @@ const SandBox: FC<SandBoxProps> = (props) => {
       result.text().then(text => {
         const allPosts = JSON.parse(text)
         setAllPostsData({
-          posts: allPosts ? JSON.parse(allPosts).posts : [],
+          posts: allPosts ? allPosts.posts : [],
           request: request
         })
       }).catch(e => console.log(e))
@@ -82,7 +91,7 @@ const SandBox: FC<SandBoxProps> = (props) => {
           </Grid>
           {!showAllPosts &&
               <Grid item xs={12}>
-                <Box p={0} sx={{ml: 3}}>
+                <Box p={0}>
                   <FormControlLabel
                       control={<Switch color="warning" defaultChecked={false}
                                        onChange={handleHtmlToggle}/>}

@@ -12,6 +12,7 @@ import slug from 'slug'
 export interface CMSEditorProps {
   post?: DocumentDetail,
   onPostChange?: (document: DocumentDetail) => void
+  apiKey?: string
 }
 
 const CMSEditor: FC<CMSEditorProps> = (props) => {
@@ -22,6 +23,7 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
   const [slugEditable, setSlugEditable] = useState<boolean>(true)
   const [showProgress, setShowProgress] = useState(false)
   const [isHomePage, setIsHomePage] = useState(true)
+  const [apiKey, setApiKey] = useState("")
   const router = useRouter()
 
   const configs = tinyMceConfigs
@@ -32,7 +34,17 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
   }
 
   useEffect(() => {
-    console.log("pathname: ", router.pathname, router.pathname === "/")
+    const key = "sessionApiKey"
+    const cachedApiKey = localStorage.getItem(key)
+    if (cachedApiKey && cachedApiKey !== 'undefined') {
+      setApiKey(cachedApiKey)
+    } else {
+      setApiKey(props.apiKey)
+      localStorage.setItem(key, props.apiKey)
+    }
+  }, [])
+
+  useEffect(() => {
     if (router.pathname === "/") {
       setIsHomePage(true)
     } else {
@@ -73,6 +85,7 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
         published: publish,
         slug: currentSlug,
         uid: props.post?.uid,
+        apiKey: apiKey
       }
       axios.post(`${getHostName()}${apiPaths.editorUpsert}`, document)
       .then(result => {
@@ -85,8 +98,10 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
         props.onPostChange(document)
         if (!router.pathname.includes("editor")) {
           setShowProgress(true)
-          router.push("/editor/" + JSON.parse(result.data).uid)
-          .catch(e => console.log(e))
+          router.push({
+            pathname: "/editor/" + JSON.parse(result.data).uid,
+            query: { apiKey: apiKey },
+          }).catch(e => console.log(e))
         }
       })
       .catch(e => console.log(e))
@@ -145,30 +160,31 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
                 init={tinyMceConfigs}
             />
           </Grid>
-          <Grid item sm={isHomePage ? 2 : 6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
+          <Grid item sm={isHomePage ? 2 : 6} sx={{mt: 2,  display: 'inline-grid', p: 2}}>
             <Button
                 onClick={saveToDb}
-                variant="contained" sx={{mb: 2}}
+                variant="contained"
                 color='success'
             >
               {isHomePage ? 'Preview' : 'Update'}
             </Button>
           </Grid>
           {
-              !isHomePage &&
-              <Grid item sm={6} sx={{mt: 2, p: 2, display: 'inline-grid'}}>
+            !isHomePage && (
+              <Grid item sm={6} sx={{mt: 2,  display: 'inline-grid', p: 2}}>
                 <Button
                     onClick={onCreateNew}
                     variant="contained"
-                    sx={{mb: 2}}
                     color='warning'
                 >
                   Create New Post
                 </Button>
               </Grid>
+            )
           }
         </Grid>
         </Paper>
+        <pre>API Key for this session<p><strong>{apiKey}</strong></p></pre>
         <ToastContainer
             style={{width: '100%', maxWidth: '600px'}}
             position="top-center"

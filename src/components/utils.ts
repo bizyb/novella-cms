@@ -10,6 +10,29 @@ export const getEpochTime = () => {
   return Math.round(Date.now() / 1000)
 }
 
+export const getIpAddress = (req) => {
+  let ip: string = req.ip
+  if (ip === undefined) {
+    ip = req.socket?.remoteAddress
+  }
+  if (ip.substring(0, 7) == "::ffff:") {
+    ip = ip.substring(7)
+  }
+  return ip
+}
+
+export const randomId = (length: number) => {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
+
 export function toArray(documentDetails: IterableIterator<DocumentDetail>) {
   const records = []
   let record = documentDetails.next()
@@ -24,7 +47,7 @@ const getTargetDocument = (data: Map<string, DocumentDetail>,
                           currentRecord: DocumentDetail, prev: boolean): DocumentMetadata | null => {
   try {
     const records: DocumentDetail[] = toArray(data.values())
-    const sortedRecords = records.filter(it => it.published)
+    const sortedRecords = records.filter(it => it.slug)
     .sort((a, b) => a.createdAt - b.createdAt)
     for (let i = 0; i < sortedRecords.length; i++) {
       const r = sortedRecords[i]

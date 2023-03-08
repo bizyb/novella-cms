@@ -2,12 +2,24 @@ import React, {FC} from 'react';
 import Head from "next/head";
 import CMSEditor from '@/components/editor';
 import Hero from "@/components/hero";
+import {getHostName} from "@/components/utils";
+import {apiPaths} from "@/paths";
 
 
-export interface EditorIndexProps {
+export async function getServerSideProps() {
+  const url = `${getHostName()}${apiPaths.apiKeyGenerator}`
+  const response = await fetch(url)
+  const keyResponse = JSON.parse(await response.text())
+  return {
+    props: keyResponse
+  }
 }
 
-const Index: FC<EditorIndexProps> = (_props) => {
+export interface EditorIndexProps {
+  apiKey?: string
+}
+
+const Index: FC<EditorIndexProps> = (props) => {
   return (
       <>
         <Head>
@@ -15,7 +27,7 @@ const Index: FC<EditorIndexProps> = (_props) => {
         </Head>
         <Hero/>
         <div className="cms-demo">
-          <CMSEditor onPostChange={() => {}}/>
+          <CMSEditor onPostChange={() => {}} apiKey={props.apiKey}/>
         </div>
       </>
 

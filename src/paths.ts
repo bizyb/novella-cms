@@ -3,5 +3,6 @@ export const apiPaths = {
   getPostBySlug: '/api/post',
   editorUpsert: '/api/post/editor/update',
   editorGet: '/api/post/editor',
-  editorDashboard: '/api/post/editor/dashboard'
+  editorDashboard: '/api/post/editor/dashboard',
+  apiKeyGenerator: '/api/key'
 }

@@ -13,6 +13,11 @@ app.prepare().then(() => {
 
   const port = parseInt(process.env.REACT_APP_PORT, 10) || 3000;
   const server = express();
+  server.set('trust proxy', true)
+
+  server.get('/api/key', (req, res) => {
+    return handle(req, res);
+  });
 
   server.get('/api/posts', (req, res) => {
     return handle(req, res);
