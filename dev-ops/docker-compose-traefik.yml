@@ -46,9 +46,18 @@ services:
 
     networks:
       - traefik_network
-
+  
     labels:
-      - traefik.enable=false
+      - traefik.enable=true
+      # Redirect all HTTP traffic to HTTPS
+      - traefik.http.routers.api.entryPoints=traefik
+      - traefik.http.routers.traefik.rule=Host(`dashboard.novellacms.com`)
+      - traefik.http.routers.traefik.middlewares=auth
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.certresolver=letsencrypt
+      - traefik.http.middlewares.auth.basicauth.users=mrecipes:$$2y$$05$$P286XrGurDASrb6LF3A0vOPQndH2ikvpLKjU/20PQHPrk3y7Wt0n6
+
 networks:
   traefik_network:
     external: true
