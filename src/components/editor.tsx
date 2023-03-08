@@ -1,7 +1,15 @@
 import React, {FC, useEffect, useState} from "react";
 import axios from "axios";
 import {DocumentDetail} from "@/types/types";
-import {Box, Button, CircularProgress, Grid, Paper, TextField} from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControlLabel,
+  Grid,
+  Paper, Switch,
+  TextField
+} from "@mui/material";
 import {useRouter} from "next/router";
 import { Editor } from "@tinymce/tinymce-react";
 import {getHostName, tinyMceConfigs} from "@/components/utils";
@@ -91,6 +99,11 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
     setDescription(event.target.value)
   }
 
+  const handlePublish = (event) => {
+    event.preventDefault()
+    setPublish(event.target.checked)
+  }
+
   const saveToDb = () => {
     if (title && slug) {
       const document: DocumentDetail = {
@@ -101,7 +114,8 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
         uid: props.post?.uid,
         apiKey: apiKey,
         thumbnail: thumbnail,
-        description: description
+        description: description,
+        createdAt: props.post?.createdAt
       }
       axios.post(`${getHostName()}${apiPaths.editorUpsert}`, document)
       .then(result => {
@@ -200,6 +214,16 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
                       label="Thumbnail"
                       onChange={handleThumbnailChange}
                   />
+                </Grid>
+                <Grid item xs={12}>
+                  <Box p={0}>
+                    <FormControlLabel
+                        control={<Switch color="success"
+                                         value={publish}
+                                         onChange={handlePublish}/>}
+                        label={'Publish'}
+                    />
+                  </Box>
                 </Grid>
               </>
           }
