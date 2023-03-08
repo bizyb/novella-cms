@@ -130,6 +130,7 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
             )
 
         }
+        <pre>API Key for this session<p><strong>{apiKey}</strong></p></pre>
         <Paper sx={{p: 1}}>
         <Grid container sx={{p: 2, mb: 1}}>
           <Grid item sm={12} sx={{
@@ -184,7 +185,6 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
           }
         </Grid>
         </Paper>
-        <pre>API Key for this session<p><strong>{apiKey}</strong></p></pre>
         <ToastContainer
             style={{width: '100%', maxWidth: '600px'}}
             position="top-center"

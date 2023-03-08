@@ -9,6 +9,8 @@ const Hero: FC<any> = (_props) => {
                 style={{marginTop: '2rem', textAlign: 'center'}}>{strings.projectName}</h1>
             <h1 className="h3 inline-block col-12 sm-width-full header-title"
                 style={{marginTop: '0.5rem', textAlign: 'center'}}>{strings.description}</h1>
+            <p className="inline-block col-12 sm-width-full header-title"
+                style={{marginTop: '0.5rem', textAlign: 'center'}}>{strings.howItWorks}</p>
           </div>
         </header>
     );
