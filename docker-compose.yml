@@ -6,7 +6,7 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.novella_cms.rule=Host(`novella.bizu.work`, `www.novella.bizu.work`)"
+      - "traefik.http.routers.novella_cms.rule=Host(`novellacms.com`, `www.novellacms.com`)"
       - "traefik.http.routers.novella_cms.service=novella_cms"
       - "traefik.http.services.novella_cms.loadbalancer.server.port=3000"
     networks:
