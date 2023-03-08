@@ -3,7 +3,9 @@ export interface DocumentMetadata {
   slug?: string,
   createdAt?: number,
   title?: string,
-  apiKey?: string
+  apiKey?: string,
+  description?: string,
+  thumbnail?: string
 }
 
 export interface DocumentDetail {
@@ -17,5 +19,7 @@ export interface DocumentDetail {
   updatedAt?: number,
   createdAt?: number,
   published?: boolean,
-  apiKey?: string
+  apiKey?: string,
+  description?: string,
+  thumbnail?: string
 }

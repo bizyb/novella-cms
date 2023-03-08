@@ -48,6 +48,8 @@ const getTargetDocument = (data, currentRecord, prev) => {
             slug: targetRecord.slug,
             createdAt: targetRecord.createdAt,
             title: targetRecord.title,
+            description: targetRecord.description,
+            thumbnail: targetRecord.thumbnail
           }
         }
       }
