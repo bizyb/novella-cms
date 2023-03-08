@@ -23,7 +23,7 @@ const Index: FC<EditorIndexProps> = (props) => {
   return (
       <>
         <Head>
-          <title>Create New Blog Post</title>
+          <title>Novella CMS | Headless Git-based CMS</title>
         </Head>
         <Hero/>
         <div className="cms-demo">
