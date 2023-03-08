@@ -1,11 +1,11 @@
-import {getEpochTime, randomId} from "@/components/utils";
+const utils = require("../../server-utils")
 
 const handler = async (_req, res) => {
   const PADDING_LENGTH = 3
   try {
-    const time = getEpochTime()
+    const time = utils.getEpochTime()
     const ip = '' //getIpAddress(req)
-    const uniquePadding = randomId(PADDING_LENGTH)
+    const uniquePadding = utils.randomId(PADDING_LENGTH)
     const apiKey = `${time}:${ip}`
     const apiKeyEncoded = uniquePadding + btoa(apiKey)
     console.log("New API Key generated: ", apiKey, " encoded: ", apiKeyEncoded)

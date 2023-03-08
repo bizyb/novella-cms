@@ -1,5 +1,4 @@
 import {DocumentDetail} from "@/types/types";
-import {getNextDocument, getPrevDocument} from "@/components/utils";
 const utils = require("../../../server-utils")
 
 const handler = async (req, res) => {
@@ -17,8 +16,8 @@ const handler = async (req, res) => {
         p = documentsByApiKey.get(id)
       }
       if (p) {
-        p.next = getNextDocument(documentsByApiKey, p)
-        p.prev = getPrevDocument(documentsByApiKey, p)
+        p.next = utils.getNextDocument(documentsByApiKey, p)
+        p.prev = utils.getPrevDocument(documentsByApiKey, p)
       }
     }
     res.status(200).json({
