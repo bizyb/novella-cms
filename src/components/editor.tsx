@@ -18,6 +18,8 @@ export interface CMSEditorProps {
 const CMSEditor: FC<CMSEditorProps> = (props) => {
   const [publish, setPublish] = useState<boolean>(false)
   const [content, setContent] = useState<string>("");
+  const [description, setDescription] = useState<string>("")
+  const [thumbnail, setThumbnail] = useState<string>("")
   const [title, setTitle] = useState<string>("")
   const [currentSlug, setCurrentSlug] = useState<string>("")
   const [slugEditable, setSlugEditable] = useState<boolean>(true)
@@ -55,8 +57,10 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
   useEffect(() => {
     if (props.post) {
       setPublish(props.post.published)
-      setContent(props.post.content)
-      setTitle(props.post.title)
+      setContent(props.post.content ? props.post.content : "")
+      setTitle(props.post.title ? props.post.title : "")
+      setDescription(props.post.description ? props.post.description : "")
+      setThumbnail(props.post.thumbnail ? props.post.thumbnail : "")
       if (props.post.slug) {
         setCurrentSlug(props.post.slug)
         setSlugEditable(false)
@@ -77,6 +81,16 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
     }
   }
 
+  const handleThumbnailChange = (event) => {
+    event.preventDefault()
+    setThumbnail(event.target.value)
+  }
+
+  const handleDescriptionChange = (event) => {
+    event.preventDefault()
+    setDescription(event.target.value)
+  }
+
   const saveToDb = () => {
     if (title && slug) {
       const document: DocumentDetail = {
@@ -85,7 +99,9 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
         published: publish,
         slug: currentSlug,
         uid: props.post?.uid,
-        apiKey: apiKey
+        apiKey: apiKey,
+        thumbnail: thumbnail,
+        description: description
       }
       axios.post(`${getHostName()}${apiPaths.editorUpsert}`, document)
       .then(result => {
@@ -151,6 +167,42 @@ const CMSEditor: FC<CMSEditorProps> = (props) => {
                 onChange={handleTitleChange}
             />
           </Grid>
+          {
+            !isHomePage && <>
+                <Grid item sm={12} sx={{
+                  pt: 1,
+                  pb: 2
+                }}>
+                  <TextField
+                      value={description}
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      id="outlined-required"
+                      label="Description"
+                      onChange={handleDescriptionChange}
+                  />
+                </Grid>
+                <Grid item sm={12} sx={{
+                  pt: 1,
+                  pb: 2
+                }}>
+                  <TextField
+                      inputProps={{
+                        style: {
+                          fontSize: '16px',
+                          paddingTop: '30px',
+                          paddingBottom: '30px'}
+                      }}
+                      value={thumbnail}
+                      fullWidth
+                      id="outlined-required"
+                      label="Thumbnail"
+                      onChange={handleThumbnailChange}
+                  />
+                </Grid>
+              </>
+          }
           <Grid item sm={12}>
             <Editor
                 id="tiny-editor"

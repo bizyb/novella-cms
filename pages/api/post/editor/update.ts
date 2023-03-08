@@ -25,6 +25,8 @@ const handler = async (req, res) => {
     record.title = request.title
     record.slug = request.slug
     record.apiKey = request.apiKey
+    record.description = request.description
+    record.thumbnail = request.thumbnail
     record.published = request.published ? request.published : false
     documentsByApiKey.set(record.uid, record)
     allDocuments.set(record.apiKey, JSON.stringify(Object.fromEntries(documentsByApiKey)))
