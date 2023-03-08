@@ -236,6 +236,21 @@ code {
   overflow: visible;
   font-size: 12px;
 }
+.api-key-box {
+  background: #ffcca3;
+  border-radius: 4px;
+  padding: 8px;
+  max-width: 190px;
+}
+
+.api-key-text {
+  font-size: 14px;
+  font-family: monospace;
+  font-weight: 700;
+}
+.api-key-heading {
+  font-size: 12px;
+}
 .editor-container pre p {}
 .editor-container code {
   font-size: 12px;

@@ -89,6 +89,13 @@ const SandBox: FC<SandBoxProps> = (props) => {
               All Documents
             </Button>
           </Grid>
+          <Grid item xs={12}>
+            <span className="api-key-heading">Your API key</span>
+            <Box className="api-key-box">
+              <span className="api-key-text">{apiKey}</span>
+            </Box>
+            {/*<pre>API Key for this session<p><strong>{apiKey}</strong></p></pre>*/}
+          </Grid>
           {!showAllPosts &&
               <Grid item xs={12}>
                 <Box p={0}>

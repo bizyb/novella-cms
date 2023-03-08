@@ -6,6 +6,7 @@ import CMSEditor from "@/components/editor";
 import {apiPaths} from "@/paths";
 import {Grid} from "@mui/material";
 import SandBox from "@/components/sandbox";
+import {useRouter} from "next/router";
 
 export async function getServerSideProps(context) {
   const {id, apiKey} = context.query
@@ -13,25 +14,22 @@ export async function getServerSideProps(context) {
   const response = await fetch(url)
   const post = JSON.parse(await response.text())
   const document: DocumentDetail = JSON.parse(post)?.post as DocumentDetail
-  let apiUrl = url
-  // let apiUrl2 = url
-  if (document) {
+  let apiUrl = null
+  if (document && document.slug) {
     apiUrl = `${getHostName()}${apiPaths.getPostBySlug}/${document.slug}?apiKey=${apiKey}`
-    // apiUrl2 = `${getHostName()}${apiPaths.getPostBySlug}/${document.slug}?apiKey=${apiKey}`
   }
   const request = {
     request: {
       "Content-Type": "application/json",
       method: 'GET',
-      urlById: apiUrl,
-      // urlBySlug: apiUrl2
+      url: apiUrl,
     }
   }
   return {
     props: {
-      post: JSON.parse(post)?.post,
+      post: document,
       enableSandbox: process.env.REACT_ENABLE_SANDBOX !== 'false',
-      request: request
+      request: apiUrl ? request : null
     }
   }
 }
@@ -44,12 +42,19 @@ export interface EditorIndexProps {
 
 const Index: FC<EditorIndexProps> = (props) => {
   const [singlePostData, setSinglePostData] = useState<any>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    setSinglePostData({
-      ...props.request,
-      post: props.post
-    })
+    if (props.request) {
+      setSinglePostData({
+        ...props.request,
+        post: props.post
+      })
+    } else {
+      // Request not found, i.e. document not found so redirect to home page
+      router.push("/")
+      .catch(e => console.log(e))
+    }
   }, [])
 
   const onPostChange = (updatedPost: DocumentDetail) => {
