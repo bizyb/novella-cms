@@ -1,8 +1,6 @@
 require('dotenv').config()
 const shelljs = require('shelljs');
 const fs = require('fs')
-const {DocumentDetail} = require("./src/types/types");
-const {toArray} = require("./src/components/utils");
 
 const creds = {
   email: process.env.REACT_APP_GIT_EMAIL,
@@ -21,6 +19,80 @@ const filePaths = {
   slugFile: process.env.REACT_APP_LOCAL_ROOT + "/" + process.env.REACT_APP_GIT_REPO + "/" + process.env.REACT_APP_SLUG_FILE,
 }
 
+const toArray = (documentDetails) => {
+  const records = []
+  let record = documentDetails.next()
+  while (!record.done) {
+    records.push(record.value)
+    record = documentDetails.next()
+  }
+  return records;
+}
+
+const getTargetDocument = (data, currentRecord, prev) => {
+  try {
+    const records = toArray(data.values())
+    const sortedRecords = records.filter(it => it.slug)
+    .sort((a, b) => a.createdAt - b.createdAt)
+    for (let i = 0; i < sortedRecords.length; i++) {
+      const r = sortedRecords[i]
+      if (r.uid === currentRecord.uid) {
+        let index = i + 1
+        if (prev) {
+          index = i - 1
+        }
+        if (index < sortedRecords.length && index >= 0) {
+          const targetRecord = sortedRecords[index]
+          return {
+            uid: targetRecord.uid,
+            slug: targetRecord.slug,
+            createdAt: targetRecord.createdAt,
+            title: targetRecord.title,
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err)
+  }
+  return null
+}
+
+const getNextDocument = (data, currentRecord) => {
+  return getTargetDocument(data, currentRecord, false)
+
+}
+
+const getPrevDocument = (data, currentRecord) => {
+  return getTargetDocument(data, currentRecord, true)
+}
+
+const getIpAddress = (req) => {
+  let ip = req.ip
+  if (ip === undefined) {
+    ip = req.socket?.remoteAddress
+  }
+  if (ip.substring(0, 7) === "::ffff:") {
+    ip = ip.substring(7)
+  }
+  return ip
+}
+
+const getEpochTime = () => {
+  return Math.round(Date.now() / 1000)
+}
+
+const randomId = (length) => {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
 
 const openFile = async (path) => {
   try {
@@ -131,8 +203,13 @@ module.exports = {
   getDocumentsByApiKey,
   getAllDocumentsByApiKey,
   getIdFromSlug,
+  getNextDocument,
+  getPrevDocument,
+  getIpAddress,
+  randomId,
+  getEpochTime,
   filePaths,
-  creds: creds,
+  creds,
 }
 
 

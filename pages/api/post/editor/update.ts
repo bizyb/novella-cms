@@ -1,6 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
 import {DocumentDetail} from "@/types/types";
-import {getEpochTime} from "@/components/utils";
 const moment = require('moment')
 const utils = require("../../../../server-utils")
 
@@ -16,12 +15,12 @@ const handler = async (req, res) => {
     if (record === undefined) {
       record = {
         uid: uuidv4(),
-        createdAt: getEpochTime(),
+        createdAt: utils.getEpochTime(),
       }
     }
 
     record.date = moment.unix(record.createdAt).format('dddd, MMMM Do, YYYY h:mm:ss A')
-    record.updatedAt = getEpochTime()
+    record.updatedAt = utils.getEpochTime()
     record.content = request.content
     record.title = request.title
     record.slug = request.slug

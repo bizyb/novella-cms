@@ -1,87 +1,8 @@
-import {DocumentDetail, DocumentMetadata} from "@/types/types";
 export const getHostName = () => {
   if (process.env.NODE_ENV === 'production') {
     return process.env.REACT_APP_HOSTNAME
   }
   return process.env.REACT_APP_HOSTNAME + ":" + process.env.REACT_APP_PORT
-}
-
-export const getEpochTime = () => {
-  return Math.round(Date.now() / 1000)
-}
-
-export const getIpAddress = (req) => {
-  let ip: string = req.ip
-  if (ip === undefined) {
-    ip = req.socket?.remoteAddress
-  }
-  if (ip.substring(0, 7) == "::ffff:") {
-    ip = ip.substring(7)
-  }
-  return ip
-}
-
-export const randomId = (length: number) => {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
-}
-
-export function toArray(documentDetails: IterableIterator<DocumentDetail>) {
-  const records = []
-  let record = documentDetails.next()
-  while (!record.done) {
-    records.push(record.value)
-    record = documentDetails.next()
-  }
-  return records;
-}
-
-const getTargetDocument = (data: Map<string, DocumentDetail>,
-                          currentRecord: DocumentDetail, prev: boolean): DocumentMetadata | null => {
-  try {
-    const records: DocumentDetail[] = toArray(data.values())
-    const sortedRecords = records.filter(it => it.slug)
-    .sort((a, b) => a.createdAt - b.createdAt)
-    for (let i = 0; i < sortedRecords.length; i++) {
-      const r = sortedRecords[i]
-      if (r.uid === currentRecord.uid) {
-        let index = i + 1
-        if (prev) {
-          index = i - 1
-        }
-        if (index < sortedRecords.length && index >= 0) {
-          const targetRecord = sortedRecords[index]
-          return {
-            uid: targetRecord.uid,
-            slug: targetRecord.slug,
-            createdAt: targetRecord.createdAt,
-            title: targetRecord.title,
-          }
-        }
-      }
-    }
-  } catch (err) {
-    console.log(err)
-  }
-  return null
-}
-
-export const getNextDocument = (data: Map<string, DocumentDetail>,
-                                currentRecord: DocumentDetail): DocumentMetadata | null => {
-  return getTargetDocument(data, currentRecord, false)
-
-}
-
-export const getPrevDocument = (data: Map<string, DocumentDetail>,
-                                currentRecord: DocumentDetail): DocumentMetadata | null => {
-  return getTargetDocument(data, currentRecord, true)
 }
 
 export const tinyMceConfigs: any = {
