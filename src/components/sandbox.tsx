@@ -2,8 +2,10 @@ import React, {FC, useEffect, useState} from "react";
 import dynamic from "next/dynamic";
 import {Box, Button, FormControlLabel, Grid, Switch} from "@mui/material";
 import {getHostName} from "@/components/utils";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {apiPaths} from "@/paths";
 import HtmlPreview from "@/components/htmlPreview";
+import {toast, ToastContainer} from "react-toastify";
 
 
 const ReactJson = dynamic(() => import('react-json-view'), {
@@ -40,6 +42,20 @@ const SandBox: FC<SandBoxProps> = (props) => {
     setShowHtml(!showHtml)
   }
 
+  const copyToClipboard = () => {
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(apiKey).then(
+          () => {
+            toast("API Key copied", {
+              type: 'success',
+              position: toast.POSITION.BOTTOM_RIGHT
+            });
+          },
+          () => {}
+      ).catch(e => console.log(e));
+    }
+  }
+
   const getAllPosts = () => {
     setShowAllPosts(true)
     setShowHtml(false)
@@ -62,6 +78,7 @@ const SandBox: FC<SandBoxProps> = (props) => {
   }
 
     return (
+        <>
         <Grid container spacing={2} sx={{p: 2}}>
           <Grid item xs={12} sx={{display: 'inline-flex'}}>
             <Button
@@ -92,9 +109,17 @@ const SandBox: FC<SandBoxProps> = (props) => {
           <Grid item xs={12}>
             <span className="api-key-heading">Your API key</span>
             <Box className="api-key-box">
-              <span className="api-key-text">{apiKey}</span>
+              <Button
+                  color="info"
+                  startIcon={<ContentCopyIcon/>}
+                  size='small'
+                  sx={{height: '32px'}}
+                  variant='text'
+                  onClick={copyToClipboard}>
+                <span className="api-key-text">{apiKey}</span>
+              </Button>
+
             </Box>
-            {/*<pre>API Key for this session<p><strong>{apiKey}</strong></p></pre>*/}
           </Grid>
           {!showAllPosts &&
               <Grid item xs={12}>
@@ -119,8 +144,20 @@ const SandBox: FC<SandBoxProps> = (props) => {
               </Grid>
             )
           }
-
         </Grid>
+        <ToastContainer
+            style={{width: '100%', maxWidth: '600px'}}
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"/>
+          </>
     )
 }
 
